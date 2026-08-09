@@ -33,6 +33,7 @@
                                    FontWeight="SemiBold">
                 <ToggleSwitch x:Name="SoundToggle" Toggled="ToggleSoundSwitch"/>
             </controls:SettingsCard>
+
         </StackPanel>
 
         <StackPanel Grid.Row="1" x:Name="BuildingStylePanel" Spacing="3" Margin="0,5,0,12">
@@ -42,6 +43,27 @@
                                    FontWeight="SemiBold">
                 <ToggleSwitch x:Name="BubbleBuildsToggle" Toggled="ToggleBubbleBuilds"/>
             </controls:SettingsCard>
+        </StackPanel>
+
+        <StackPanel Grid.Row="2" Spacing="3" Margin="0,0,0,12">
+            <TextBlock Text="Shop Appearance Options (Launcher)"
+                       Style="{ThemeResource CaptionTextBlockStyle}"
+                       FontWeight="SemiBold"/>
+            <controls:SettingsExpander Header="Item Shop Cards"
+                                       Description="Configure what is shown on item cards on the Eon Shop page."
+                                       FontWeight="SemiBold"
+                                       IsExpanded="True">
+                <controls:SettingsExpander.HeaderIcon>
+                    <ImageIcon Source="ms-appx:///Content/Texture/Icons/IC_Shop.svg"/>
+                </controls:SettingsExpander.HeaderIcon>
+                <controls:SettingsExpander.Items>
+                    <controls:SettingsCard Header="Show Rarity Badges on Shop Cards"
+                                           Description="Display the rarity label and color indicator on item shop cards."
+                                           FontWeight="SemiBold">
+                        <ToggleSwitch x:Name="ShowRarityBadgesToggle" Toggled="ShowRarityBadgesToggle_Toggled"/>
+                    </controls:SettingsCard>
+                </controls:SettingsExpander.Items>
+            </controls:SettingsExpander>
         </StackPanel>
 
         <Grid x:Name="FooterGrid" Grid.Row="8" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,0,12">
@@ -71,7 +93,8 @@
                     <controls:SettingsCard FontWeight="SemiBold">
                         <controls:SettingsCard.Header>
                             <TextBlock Margin="-35,0,0,0"
-                                       FontWeight="SemiBold">
+                                       FontWeight="SemiBold"
+                                       TextWrapping="Wrap">
                                 <Run Text="Launcher made by"/>
                                 <Hyperlink NavigateUri="{x:Bind GitHub_Juri}">
                                     <Run Text="Jurij15"/>

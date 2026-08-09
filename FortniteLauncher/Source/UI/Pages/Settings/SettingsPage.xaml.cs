@@ -7,6 +7,7 @@ namespace FortniteLauncher.Pages
 {
     public sealed partial class SettingsPage : Page
     {
+        private bool _loadingSettings;
         private readonly string LauncherVersion = GlobalSettings.Version;
 
         private readonly string About_Header = $"About {ProjectDefinitions.Name} Launcher";
@@ -22,8 +23,20 @@ namespace FortniteLauncher.Pages
 
         private void PageLoaded(object Sender, RoutedEventArgs Event)
         {
+            _loadingSettings = true;
             SoundToggle.IsOn = GlobalSettings.Options.IsSoundEnabled;
             BubbleBuildsToggle.IsOn = GlobalSettings.Options.IsBubbleBuildsEnabled;
+            ShowRarityBadgesToggle.IsOn = GlobalSettings.Options.ShowRarityBadges;
+            _loadingSettings = false;
+        }
+
+        private void ShowRarityBadgesToggle_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (_loadingSettings) return;
+
+            GlobalSettings.Options.ShowRarityBadges = ShowRarityBadgesToggle.IsOn;
+            UserSettings.SaveSettings();
+            ShopAppearanceSettings.NotifyChanged();
         }
 
         private void ToggleSoundSwitch(object Sender, RoutedEventArgs Event)

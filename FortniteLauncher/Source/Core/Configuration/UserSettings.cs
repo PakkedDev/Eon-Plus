@@ -49,6 +49,7 @@ class UserSettings
             IsBubbleBuildsEnabled = false,
             RedirectProtected = false,
             SkinUrl = string.Empty,
+            ShowRarityBadges = true,
         };
     }
 }

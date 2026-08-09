@@ -7,20 +7,282 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid>
-        <ProgressRing x:Name="LoadingIndicator" 
-                      IsActive="True" 
-                      Visibility="Visible"
-                      HorizontalAlignment="Center" 
-                      VerticalAlignment="Center" />
-        
-        <WebView2 x:Name="MyWebView" 
-                  Width="1170" 
-                  Height="700" 
-                  VerticalAlignment="Top" 
-                  HorizontalAlignment="Center"
-                  Margin="0" 
-                  ScrollViewer.HorizontalScrollBarVisibility="Hidden"
-                  ScrollViewer.VerticalScrollBarVisibility="Hidden" />
+    <Page.Resources>
+        <SolidColorBrush x:Key="ShopImageSurfaceBrush" Color="#25293B"/>
+        <SolidColorBrush x:Key="ShopSectionBrush" Color="#F2F2F2"/>
+    </Page.Resources>
+
+    <Grid Margin="58,18,58,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Margin="0,0,0,18">
+            <StackPanel Spacing="2">
+                <TextBlock Text="Current Eon Shop" Style="{ThemeResource TitleTextBlockStyle}"/>
+                <TextBlock x:Name="ShopDateLabel"
+                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                           Style="{ThemeResource BodyTextBlockStyle}"/>
+            </StackPanel>
+
+            <StackPanel HorizontalAlignment="Right" VerticalAlignment="Center" Orientation="Horizontal" Spacing="12">
+                <TextBlock x:Name="ShopRefreshCountdownLabel"
+                           Visibility="Collapsed"
+                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                           Style="{ThemeResource CaptionTextBlockStyle}"
+                           VerticalAlignment="Center"/>
+                <Button x:Name="RefreshButton"
+                        Click="RefreshButton_Click"
+                        ToolTipService.ToolTip="Refresh current Eon shop">
+                    <StackPanel Orientation="Horizontal" Spacing="7">
+                        <FontIcon Glyph="&#xE72C;" RenderTransformOrigin="0.5,0.5">
+                            <FontIcon.RenderTransform>
+                                <RotateTransform x:Name="RefreshIconRotation"/>
+                            </FontIcon.RenderTransform>
+                        </FontIcon>
+                        <TextBlock x:Name="RefreshButtonLabel" Text="Refresh"/>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        <Grid Grid.Row="1">
+            <ScrollViewer x:Name="ShopScrollViewer"
+                          Padding="0,0,0,32"
+                          HorizontalScrollMode="Disabled"
+                          HorizontalScrollBarVisibility="Disabled"
+                          VerticalScrollMode="Enabled"
+                          VerticalScrollBarVisibility="Auto"
+                          IsVerticalRailEnabled="True"
+                          IsScrollInertiaEnabled="True">
+                <ItemsRepeater x:Name="ShopSectionsRepeater">
+                    <ItemsRepeater.Layout>
+                        <StackLayout Spacing="24"/>
+                    </ItemsRepeater.Layout>
+                    <ItemsRepeater.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Spacing="9">
+                                <TextBlock Text="{Binding Title}"
+                                           FontSize="18"
+                                           FontWeight="SemiBold"
+                                           Foreground="{StaticResource ShopSectionBrush}"/>
+                                <ItemsRepeater ItemsSource="{Binding Items}">
+                                    <ItemsRepeater.Layout>
+                                        <UniformGridLayout MinItemWidth="172"
+                                                           MinItemHeight="256"
+                                                           MinRowSpacing="12"
+                                                           MinColumnSpacing="12"
+                                                           ItemsJustification="Start"/>
+                                    </ItemsRepeater.Layout>
+                                    <ItemsRepeater.ItemTemplate>
+                                        <DataTemplate>
+                                            <Button Click="ShopCard_Click"
+                                                    PointerEntered="ShopCard_PointerEntered"
+                                                    PointerExited="ShopCard_PointerExited"
+                                                    Tag="{Binding}"
+                                                    Padding="0"
+                                                    Background="Transparent"
+                                                    BorderBrush="Transparent"
+                                                    BorderThickness="0"
+                                                    CornerRadius="8"
+                                                    HorizontalContentAlignment="Stretch"
+                                                    VerticalContentAlignment="Stretch">
+                                                <Button.Resources>
+                                                    <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="Transparent"/>
+                                                    <SolidColorBrush x:Key="ButtonBorderBrushPointerOver" Color="Transparent"/>
+                                                    <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="Transparent"/>
+                                                    <SolidColorBrush x:Key="ButtonBorderBrushPressed" Color="Transparent"/>
+                                                </Button.Resources>
+                                                <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                                        BorderThickness="1"
+                                                        CornerRadius="8">
+                                                    <Grid>
+                                                        <Grid.RowDefinitions>
+                                                            <RowDefinition Height="170"/>
+                                                            <RowDefinition Height="Auto"/>
+                                                        </Grid.RowDefinitions>
+                                                        <Grid Background="{StaticResource ShopImageSurfaceBrush}">
+                                                            <Image Source="{Binding CardBackgroundImageUrl}" Stretch="UniformToFill"/>
+                                                            <Image Source="{Binding IconUrl}" Stretch="UniformToFill" VerticalAlignment="Bottom"/>
+                                                            <Grid Width="{Binding RarityBadgeCanvasWidth}"
+                                                                  Height="{Binding RarityBadgeCanvasHeight}"
+                                                                  Margin="6,3,0,0"
+                                                                  HorizontalAlignment="Left"
+                                                                  VerticalAlignment="Top"
+                                                                  Visibility="{Binding RarityBadgeVisibility}">
+                                                                <Grid.RenderTransform>
+                                                                    <TranslateTransform Y="{Binding RarityBadgeOffsetY}"/>
+                                                                </Grid.RenderTransform>
+                                                                <Image Source="{Binding RarityBadgeImageUrl}"
+                                                                       Width="{Binding RarityBadgeCanvasWidth}"
+                                                                       Height="{Binding RarityBadgeCanvasHeight}"
+                                                                       Stretch="Uniform"
+                                                                       HorizontalAlignment="Left"
+                                                                       VerticalAlignment="Top"
+                                                                       Visibility="{Binding RarityBadgeImageVisibility}"/>
+                                                                <Border Background="{Binding RarityBadgeBackgroundBrush}"
+                                                                        BorderBrush="{Binding RarityBrush}"
+                                                                        BorderThickness="2"
+                                                                        Padding="9,3"
+                                                                        Visibility="{Binding RarityBadgeFallbackVisibility}"
+                                                                        RenderTransformOrigin="0.5,0.5">
+                                                                    <Border.RenderTransform>
+                                                                        <SkewTransform AngleX="-12"/>
+                                                                    </Border.RenderTransform>
+                                                                    <TextBlock Text="{Binding RarityLabel}" FontSize="10" FontWeight="Bold" FontStyle="Italic" Foreground="{Binding RarityBrush}" HorizontalAlignment="Center"/>
+                                                                </Border>
+                                                            </Grid>
+                                                        </Grid>
+                                                        <Border Grid.Row="1" Background="Transparent" CornerRadius="0,0,7,7">
+                                                            <StackPanel Padding="11,10,11,11" Spacing="4">
+                                                                <TextBlock Text="{Binding Name}" FontWeight="SemiBold" FontSize="14" TextTrimming="CharacterEllipsis"/>
+                                                                <TextBlock Text="{Binding ReadableType}" Foreground="#A6A6A6" FontSize="12" TextTrimming="CharacterEllipsis"/>
+                                                                <StackPanel Orientation="Horizontal" Spacing="5" Margin="0,2,0,0">
+                                                                    <Image Source="{Binding PriceIconUrl}" Width="15" Height="15" Stretch="Uniform" VerticalAlignment="Center"/>
+                                                                    <TextBlock Text="{Binding Price}" FontWeight="SemiBold" FontSize="12" Foreground="#36D1C4"/>
+                                                                </StackPanel>
+                                                            </StackPanel>
+                                                        </Border>
+                                                    </Grid>
+                                                </Border>
+                                            </Button>
+                                        </DataTemplate>
+                                    </ItemsRepeater.ItemTemplate>
+                                </ItemsRepeater>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsRepeater.ItemTemplate>
+                </ItemsRepeater>
+            </ScrollViewer>
+
+            <StackPanel x:Name="LoadingState" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="10">
+                <ProgressRing IsActive="True" Width="30" Height="30" HorizontalAlignment="Center"/>
+                <TextBlock Text="Searching all realities..."
+                           FontWeight="SemiBold"
+                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+            </StackPanel>
+
+            <StackPanel x:Name="EmptyState" Visibility="Collapsed" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="10" MaxWidth="400">
+                <FontIcon Glyph="&#xE7BA;" FontSize="32" HorizontalAlignment="Center"/>
+                <TextBlock Text="No shop is archived for this date" FontSize="20" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                <TextBlock Text="Choose another day to browse the historical item shop."
+                           TextAlignment="Center"
+                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                           TextWrapping="Wrap"/>
+            </StackPanel>
+
+            <StackPanel x:Name="ErrorState" Visibility="Collapsed" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="10" MaxWidth="400">
+                <FontIcon Glyph="&#xEA39;" FontSize="32" HorizontalAlignment="Center" Foreground="#FFB4AB"/>
+                <TextBlock Text="The item shop could not be loaded." FontSize="20" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                <TextBlock x:Name="ErrorMessage" TextAlignment="Center" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"/>
+                <Button Content="Try again" Click="RefreshButton_Click" HorizontalAlignment="Center"/>
+            </StackPanel>
+        </Grid>
+
+        <Grid x:Name="ItemDetailsOverlay" Visibility="Collapsed" Opacity="0" Margin="-58,-18,-58,0" Background="#D6111320">
+            <Border x:Name="ItemDetailsPanel"
+                    Margin="76,42,76,42"
+                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="12">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid Padding="26,18,18,18" Background="#2C3045">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Spacing="5">
+                            <StackPanel Orientation="Horizontal" Spacing="10">
+                                <TextBlock Text="{Binding Name}" FontSize="26" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+                                <Border Background="#D9212121" CornerRadius="10" Padding="8,4" VerticalAlignment="Center">
+                                    <StackPanel Orientation="Horizontal" Spacing="5">
+                                        <Ellipse Width="8" Height="8" Fill="{Binding RarityBrush}" VerticalAlignment="Center"/>
+                                        <TextBlock Text="{Binding RarityLabel}" FontSize="11" FontWeight="SemiBold"/>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                            <TextBlock Text="{Binding ReadableType}" Foreground="{ThemeResource TextFillColorSecondaryBrush}" FontSize="15"/>
+                        </StackPanel>
+                        <Button Grid.Column="1" Click="CloseItemDetailsButton_Click" ToolTipService.ToolTip="Close item details">
+                            <FontIcon Glyph="&#xE711;"/>
+                        </Button>
+                    </Grid>
+
+                    <Grid Grid.Row="1" Margin="24,22,24,24" ColumnSpacing="24">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.15*"/>
+                            <ColumnDefinition Width="0.85*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <Border Background="#202337" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="10" Padding="20">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Image Source="{Binding IconUrl}" Stretch="Uniform" Margin="16"/>
+                                <ItemsRepeater Grid.Row="1" ItemsSource="{Binding ImageUrls}" Margin="0,12,0,0">
+                                    <ItemsRepeater.Layout>
+                                        <StackLayout Orientation="Horizontal" Spacing="8"/>
+                                    </ItemsRepeater.Layout>
+                                    <ItemsRepeater.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Width="54" Height="54" Background="#2A2E43" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="6" Padding="5">
+                                                <Image Source="{Binding}" Stretch="Uniform"/>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsRepeater.ItemTemplate>
+                                </ItemsRepeater>
+                            </Grid>
+                        </Border>
+
+                        <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
+                            <StackPanel Spacing="14">
+                                <StackPanel Spacing="6">
+                                    <TextBlock Text="About" FontSize="17" FontWeight="SemiBold"/>
+                                    <TextBlock Text="{Binding Description}" TextWrapping="Wrap" Foreground="{ThemeResource TextFillColorSecondaryBrush}" FontSize="14"/>
+                                </StackPanel>
+                                <Border Background="#25293B" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="8" Padding="16">
+                                    <StackPanel Spacing="12">
+                                        <StackPanel Orientation="Horizontal" Spacing="8">
+                                            <Image Source="{Binding PriceIconUrl}" Width="20" Height="20" Stretch="Uniform"/>
+                                            <TextBlock Text="{Binding Price}" FontSize="18" FontWeight="SemiBold" Foreground="#36D1C4"/>
+                                        </StackPanel>
+                                        <Grid ColumnSpacing="12" RowSpacing="9">
+                                            <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/>
+                                            </Grid.RowDefinitions>
+                                            <TextBlock Text="Rarity" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/><TextBlock Grid.Column="1" Text="{Binding Rarity}"/>
+                                            <TextBlock Grid.Row="1" Text="Type" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/><TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding ReadableType}"/>
+                                            <TextBlock Grid.Row="2" Text="Slug" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/><TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Slug}" TextWrapping="Wrap"/>
+                                            <TextBlock Grid.Row="3" Text="ID" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/><TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding Id}" TextWrapping="Wrap"/>
+                                            <TextBlock Grid.Row="4" Text="Bundle set" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/><TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding BundleSet}"/>
+                                            <TextBlock Grid.Row="5" Text="Banner text" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/><TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding BannerText}"/>
+                                            <TextBlock Grid.Row="6" Text="History" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/><TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding History}"/>
+                                            <TextBlock Grid.Row="7" Text="LEGO association" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/><TextBlock Grid.Row="7" Grid.Column="1" Text="{Binding LegoAssociation}"/>
+                                            <TextBlock Grid.Row="8" Text="Offer" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/><TextBlock Grid.Row="8" Grid.Column="1" Text="{Binding Offer}"/>
+                                            <TextBlock Grid.Row="9" Text="Images" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/><TextBlock Grid.Row="9" Grid.Column="1" Text="{Binding ImageUrls.Count}"/>
+                                        </Grid>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Grid>
+                </Grid>
+            </Border>
+        </Grid>
     </Grid>
 </Page>

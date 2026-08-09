@@ -8,4 +8,5 @@
     public bool IsBubbleBuildsEnabled { get; set; }
     public bool RedirectProtected { get; set; }
     public string SkinUrl { get; set; }
+    public bool ShowRarityBadges { get; set; } = true;
 }

@@ -16,7 +16,6 @@
     // Credits
     public const string GitHub_Juri = "https://github.com/Jurij15";
     public const string GitHub_Greenwood = "https://github.com/EonOGFN";
-
     // Download
     public const string DownloadBuildURL = "https://services.eonfn.net/build/download";
     public const string DownloadLauncherURL = "https://services.eonfn.net/launcher/download";

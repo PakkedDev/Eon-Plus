@@ -6,10 +6,9 @@
     xmlns:local="using:FortniteLauncher.Pages"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
     mc:Ignorable="d">
 
-    <Grid>
+    <Grid x:Name="PageRoot">
         <NavigationView x:Name="MainNavigation"
                         Loaded="MainNavigation_Loaded"
                         PaneDisplayMode="Left"
@@ -88,7 +87,9 @@
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
-                <NavigationViewItem x:Name="ItemShopItem">
+                <NavigationViewItem x:Name="ItemShopItem"
+                                    IsEnabled="False"
+                                    ToolTipService.ToolTip="Shop Services are currently unavailable">
                     <NavigationViewItem.Icon>
                         <ImageIcon Width="24" Height="24" Margin="-4">
                             <ImageIcon.Source>
@@ -133,5 +134,14 @@
 
             <Frame x:Name="RootFrame" Margin="0,0,0,0"/>
         </NavigationView>
+
+        <!-- Disabled controls do not receive pointer input, so this transparent overlay preserves the unavailable tooltip. -->
+        <Canvas IsHitTestVisible="True">
+            <Border x:Name="ShopServiceUnavailableOverlay"
+                    Background="Transparent"
+                    ToolTipService.ToolTip="Shop Services are currently unavailable"
+                    ToolTipService.Placement="Right"
+                    PointerPressed="ShopServiceUnavailableOverlay_PointerPressed"/>
+        </Canvas>
     </Grid>
 </Page>

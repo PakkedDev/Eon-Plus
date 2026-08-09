@@ -112,6 +112,15 @@
 		<Content Include="Content\Texture\Icons\IC_ServerStatus.svg" />
 		<Content Include="Content\Texture\Icons\IC_Settings.svg" />
 		<Content Include="Content\Texture\Icons\IC_Shop.svg" />
+		<Content Include="Content\Texture\Shop\Rarity\common.svg" />
+		<Content Include="Content\Texture\Shop\Rarity\uncommon.svg" />
+		<Content Include="Content\Texture\Shop\Rarity\rare.svg" />
+		<Content Include="Content\Texture\Shop\Rarity\epic.svg" />
+		<Content Include="Content\Texture\Shop\Rarity\legendary.svg" />
+		<Content Include="Content\Texture\Shop\Rarity\icon.svg" />
+		<Content Include="Content\Texture\Shop\Rarity\marvel.svg" />
+		<Content Include="Content\Texture\Shop\Rarity\dc.svg" />
+		<Content Include="Content\Texture\Shop\Rarity\special.svg" />
 		<Content Include="Content\Texture\UI\T_Banner.png" />
 		<Content Include="Content\Texture\UI\T_BattleBus.png" />
 		<Content Include="Content\Texture\UI\T_Donate.png" />
